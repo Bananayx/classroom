@@ -192,8 +192,8 @@
 </h1>
 
 <div class="controls" id="initialControls">
-    <label>安静时间（秒）: <input type="number" id="countdownInput" value="30" min="5" /></label>
-    <label>噪音阈值: <input type="number" id="dbThresholdInput" value="30" min="1" /></label>
+    <label>安静时间（秒）: <input type="number" id="countdownInput" value="30" min="1" /></label>
+    <label>安静阈值（分贝）: <input type="number" id="dbThresholdInput" value="35" min="1" /></label>
     <button onclick="resetAndStartChallenge()">开始安静挑战</button>
 </div>
 
@@ -214,11 +214,11 @@
     <h2>设置</h2>
     <label>
         <span>安静时间（秒）:</span>
-        <input type="number" id="countdownInputSettings" value="30" min="5" />
+        <input type="number" id="countdownInputSettings" value="30" min="1" />
     </label>
     <label>
-        <span>噪音阈值:</span>
-        <input type="number" id="dbThresholdInputSettings" value="30" min="1" />
+        <span>安静阈值（分贝）:</span>
+        <input type="number" id="dbThresholdInputSettings" value="35" min="1" />
     </label>
     <button onclick="saveSettings()">保存设置</button>
 </div>
@@ -263,7 +263,7 @@
     }
 
     let audioContext, analyser, microphone, javascriptNode;
-    let isLoud = false;
+    let isQuiet = false;
     let isRunning = false;
     let countdownTimer = null;
     let score = 0;
@@ -285,8 +285,8 @@
     }
 
     function saveSettings() {
-        countdownSeconds = parseInt(document.getElementById('countdownInputSettings').value) || 30;
-        dbThreshold = parseInt(document.getElementById('dbThresholdInputSettings').value) || 30;
+        countdownSeconds = parseInt(document.getElementById('countdownInputSettings').value) || 10;
+        dbThreshold = parseInt(document.getElementById('dbThresholdInputSettings').value) || 50;
         document.getElementById('countdownInput').value = countdownSeconds;
         document.getElementById('dbThresholdInput').value = dbThreshold;
         settingsPanel.classList.remove('active');
@@ -296,7 +296,7 @@
         score = 0;
         saplingCount = 0;
         treeGrid.innerHTML = "";
-        scoreDisplay.textContent = saplingCount; // 显示当前小树数量
+        scoreDisplay.textContent = score;
         document.body.style.backgroundColor = '#f4e7d3';
         startChallenge();
     }
@@ -306,8 +306,8 @@
     }
 
     function startChallenge() {
-        countdownSeconds = parseInt(document.getElementById('countdownInput').value) || 30;
-        dbThreshold = parseInt(document.getElementById('dbThresholdInput').value) || 30;
+        countdownSeconds = parseInt(document.getElementById('countdownInput').value) || 10;
+        dbThreshold = parseInt(document.getElementById('dbThresholdInput').value) || 50;
 
         if (isRunning) return;
         isRunning = true;
@@ -341,9 +341,10 @@
         countdownTimer = setInterval(() => {
             if (!isRunning) return;
 
-            if (isLoud) {
-                countdownDisplay.textContent = `有噪音，请保持安静... (${remainingTime}s)`;
-                remainingTime = countdownSeconds; // 重置倒计时
+            if (isQuiet) {
+                countdownDisplay.textContent = `环境安静，保持中... (${remainingTime}s)`;
+            } else {
+                countdownDisplay.textContent = `环境太吵，请保持安静... (${remainingTime}s)`;
                 return;
             }
 
@@ -368,9 +369,6 @@
         sapling.textContent = '🌱';
         treeGrid.appendChild(sapling);
         saplingCount++;
-        
-        // 实时更新当前小树数量显示
-        scoreDisplay.textContent = saplingCount;
 
         if (saplingCount >= 2) {
             const saplings = treeGrid.querySelectorAll('.sapling');
@@ -388,9 +386,7 @@
                     tree.textContent = '🌳';
                     treeGrid.appendChild(tree);
                     score++;
-                    
-                    // 合并后更新显示为当前小树数量
-                    scoreDisplay.textContent = saplingCount;
+                    scoreDisplay.textContent = score;
 
                     if (score % 10 === 0) {
                         updateBackground(score);
@@ -420,7 +416,7 @@
                 const average = array.reduce((a, b) => a + b) / array.length;
                 const db = Math.round(average);
                 dbDisplay.textContent = db;
-                isLoud = db >= dbThreshold;
+                isQuiet = db <= dbThreshold;
             };
         }).catch(err => {
             alert("麦克风启动失败：" + err.message);
