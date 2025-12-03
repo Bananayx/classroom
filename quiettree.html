@@ -83,6 +83,8 @@
             margin: 20px 0;
             font-size: 18px;
             color: #333;
+            transform: scale(2);
+            transform-origin: center;
         }
         .controls {
             margin: 20px 0;
@@ -128,17 +130,24 @@
             0% { transform: scale(0); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
+        @keyframes fadeOut {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0; }
+        }
         .merge-animation {
             animation: merge 0.8s ease-in-out forwards;
         }
         .grow-animation {
             animation: grow 0.5s ease-out forwards;
         }
+        .fade-out-animation {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
         .floating-icons {
             position: absolute;
             top: 20px;
             right: 20px;
-            display: none;
+            display: flex;
             flex-direction: column;
             gap: 10px;
         }
@@ -193,19 +202,20 @@
 
 <div class="controls" id="initialControls">
     <label>倒计时（秒）: <input type="number" id="countdownInput" value="10" min="1" /></label>
-    <label>分贝阈值: <input type="number" id="dbThresholdInput" value="50" min="1" /></label>
+    <label>安静阈值: <input type="number" id="dbThresholdInput" value="30" min="1" /></label>
     <button onclick="resetAndStartChallenge()">开始安静挑战</button>
 </div>
 
 <div class="info-row">
-    <span>当前分贝：<span id="decibel">--</span></span>
-    <span>当前小树：<span id="score">0</span></span>
-    <span>倒计时：<span id="countdown">--</span></span>
-</div>
+            <span>当前音量：<span id="decibel">--</span></span>
+            <span>当前小树：<span id="score">0</span></span>
+            <span>倒计时：<span id="countdown">--</span></span>
+        </div>
 
 <div id="treeGrid"></div>
 
 <div class="floating-icons" id="floatingIcons">
+    <button onclick="window.location.href='index.html'">🏠</button>
     <button onclick="toggleSettings()">⚙️</button>
     <button id="startPauseButton" class="start-button" onclick="toggleChallenge()">🎮</button>
 </div>
@@ -217,8 +227,12 @@
         <input type="number" id="countdownInputSettings" value="10" min="1" />
     </label>
     <label>
-        <span>分贝阈值:</span>
-        <input type="number" id="dbThresholdInputSettings" value="50" min="1" />
+        <span>安静阈值:</span>
+        <input type="number" id="dbThresholdInputSettings" value="30" min="1" />
+    </label>
+    <label>
+        <span>噪音持续时间阈值(秒):</span>
+        <input type="number" id="noiseDurationInputSettings" value="3" min="1" />
     </label>
     <button onclick="saveSettings()">保存设置</button>
 </div>
@@ -268,6 +282,9 @@
     let countdownTimer = null;
     let score = 0;
     let saplingCount = 0;
+    let noiseTimer = null;
+    let noiseDuration = 3; // 默认3秒
+    let noiseTime = 0;
 
     const dbDisplay = document.getElementById('decibel');
     const scoreDisplay = document.getElementById('score');
@@ -281,12 +298,14 @@
     function toggleSettings() {
         document.getElementById('countdownInputSettings').value = document.getElementById('countdownInput').value;
         document.getElementById('dbThresholdInputSettings').value = document.getElementById('dbThresholdInput').value;
+        document.getElementById('noiseDurationInputSettings').value = noiseDuration;
         settingsPanel.classList.toggle('active');
     }
 
     function saveSettings() {
         countdownSeconds = parseInt(document.getElementById('countdownInputSettings').value) || 10;
-        dbThreshold = parseInt(document.getElementById('dbThresholdInputSettings').value) || 50;
+        dbThreshold = parseInt(document.getElementById('dbThresholdInputSettings').value) || 30;
+        noiseDuration = parseInt(document.getElementById('noiseDurationInputSettings').value) || 3;
         document.getElementById('countdownInput').value = countdownSeconds;
         document.getElementById('dbThresholdInput').value = dbThreshold;
         settingsPanel.classList.remove('active');
@@ -307,13 +326,12 @@
 
     function startChallenge() {
         countdownSeconds = parseInt(document.getElementById('countdownInput').value) || 10;
-        dbThreshold = parseInt(document.getElementById('dbThresholdInput').value) || 50;
+        dbThreshold = parseInt(document.getElementById('dbThresholdInput').value) || 30;
 
         if (isRunning) return;
         isRunning = true;
 
         initialControls.style.display = 'none';
-        floatingIcons.style.display = 'flex';
 
         startMicrophone();
         startCountdownCycle();
@@ -325,6 +343,7 @@
     function pauseChallenge() {
         isRunning = false;
         clearInterval(countdownTimer);
+        clearInterval(noiseTimer);
         countdownDisplay.textContent = "--";
         stopMicrophone();
 
@@ -415,10 +434,62 @@
                 const db = Math.round(average);
                 dbDisplay.textContent = db;
                 isQuiet = db <= dbThreshold;
+                
+                // 噪音检测逻辑
+                if (!isQuiet && isRunning) {
+                    if (!noiseTimer) {
+                        noiseTime = 0;
+                        noiseTimer = setInterval(() => {
+                            noiseTime++;
+                            if (noiseTime >= noiseDuration) {
+                                removeSapling();
+                                clearInterval(noiseTimer);
+                                noiseTimer = null;
+                                noiseTime = 0;
+                            }
+                        }, 1000);
+                    }
+                } else {
+                    if (noiseTimer) {
+                        clearInterval(noiseTimer);
+                        noiseTimer = null;
+                        noiseTime = 0;
+                    }
+                }
             };
         }).catch(err => {
             alert("麦克风启动失败：" + err.message);
         });
+    }
+
+    function removeSapling() {
+        const saplings = treeGrid.querySelectorAll('.sapling');
+        const trees = treeGrid.querySelectorAll('.tree');
+        
+        // 优先移除树苗
+        if (saplings.length > 0) {
+            const lastSapling = saplings[saplings.length - 1];
+            lastSapling.classList.add('fade-out-animation');
+            setTimeout(() => {
+                lastSapling.remove();
+                saplingCount--;
+            }, 500);
+        } 
+        // 如果没有树苗，则移除树
+        else if (trees.length > 0) {
+            const lastTree = trees[trees.length - 1];
+            lastTree.classList.add('fade-out-animation');
+            setTimeout(() => {
+                lastTree.remove();
+                score--;
+                scoreDisplay.textContent = score;
+                
+                // 更新背景色
+                if (score % 10 === 9) { // 从10的倍数减1，因为已经减了1
+                    updateBackground(score);
+                }
+            }, 500);
+        }
     }
 
     function stopMicrophone() {
