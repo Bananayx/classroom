@@ -507,14 +507,15 @@
 <!-- 小组选择器 -->
 <div class="group-selector">
     <button class="group-btn active" onclick="showGroup('all')">全部</button>
-    <button class="group-btn" onclick="showGroup('group1')">①蛹往直前组</button>
-    <button class="group-btn" onclick="showGroup('group2')">②富强民组</button>
-    <button class="group-btn" onclick="showGroup('group3')">③墨华组</button>
-    <button class="group-btn" onclick="showGroup('group4')">④涅槃四组</button>
-    <button class="group-btn" onclick="showGroup('group5')">⑤半角模型组</button>
-    <button class="group-btn" onclick="showGroup('group6')">⑥滑动变组</button>
-    <button class="group-btn" onclick="showGroup('group7')">⑦六元七次方程组</button>
-    <button class="group-btn" onclick="showGroup('group8')">⑧二元一次方程组</button>
+    <button class="group-btn" onclick="showGroup('group1')">第一小组</button>
+    <button class="group-btn" onclick="showGroup('group2')">第二小组</button>
+    <button class="group-btn" onclick="showGroup('group3')">第三小组</button>
+    <button class="group-btn" onclick="showGroup('group4')">第四小组</button>
+    <button class="group-btn" onclick="showGroup('group5')">第五小组</button>
+    <button class="group-btn" onclick="showGroup('group6')">第六小组</button>
+    <button class="group-btn" onclick="showGroup('group7')">第七小组</button>
+    <button class="group-btn" onclick="showGroup('group8')">第八小组</button>
+    <button class="group-btn" onclick="showGroup('group9')">第九小组</button>
 </div>
 
 <!-- 学生列表容器（独立滚动区域） -->
@@ -572,69 +573,75 @@
     // 学生数据管理
     const classData = {
         group1: [
-            { name: '代金宏', trees: 0 },
-            { name: '罗淼淼', trees: 0 },
-            { name: '姚思辰', trees: 0 },
-            { name: '欧雨欣', trees: 0 },
-            { name: '段世杰', trees: 0 },
-            { name: '叶杨敏', trees: 0 }
+            { name: '杨锦程', trees: 0 },
+            { name: '陈可馨', trees: 0 },
+            { name: '刘芮菡', trees: 0 },
+            { name: '杨蕊瑜', trees: 0 },
+            { name: '奚浩博', trees: 0 },
+            { name: '刘凡琦', trees: 0 }
         ],
         group2: [
-            { name: '全智诚', trees: 0 },
-            { name: '张紫耘', trees: 0 },
-            { name: '徐紫瑶', trees: 0 },
-            { name: '邱煕恩', trees: 0 },
-            { name: '倪振雄', trees: 0 },
-            { name: '谢睿泽', trees: 0 }
+            { name: '龙俊材', trees: 0 },
+            { name: '杨澌汶', trees: 0 },
+            { name: '彭馨怡', trees: 0 },
+            { name: '张晨轩', trees: 0 },
+            { name: '刘师讯', trees: 0 }
         ],
         group3: [
-            { name: '张琮奇', trees: 0 },
-            { name: '陈雨航', trees: 0 },
-            { name: '陈佳英', trees: 0 },
-            { name: '唐钰湘', trees: 0 },
-            { name: '颇修娴', trees: 0 },
-            { name: '罗航', trees: 0 }
+            { name: '唐诗涵', trees: 0 },
+            { name: '付子琳', trees: 0 },
+            { name: '刘盈妤', trees: 0 },
+            { name: '刘名邦', trees: 0 },
+            { name: '邱鹏诚', trees: 0 },
+            { name: '徐子洋', trees: 0 }
         ],
         group4: [
-            { name: '吴昊', trees: 0 },
-            { name: '奚婧皓', trees: 0 },
-            { name: '夏晨熙', trees: 0 },
-            { name: '郑雅馨', trees: 0 },
-            { name: '谭梓暄', trees: 0 },
-            { name: '黄诗涵', trees: 0 }
+            { name: '刘泓成', trees: 0 },
+            { name: '杜思琪', trees: 0 },
+            { name: '万国芳', trees: 0 },
+            { name: '胡静', trees: 0 },
+            { name: '黄沛', trees: 0 },
+            { name: '陈奕名', trees: 0 }
         ],
         group5: [
-            { name: '张芸熙', trees: 0 },
-            { name: '夏箐梅', trees: 0 },
-            { name: '毛欣怡', trees: 0 },
-            { name: '张祝融', trees: 0 },
-            { name: '杨丝琦', trees: 0 },
-            { name: '李皓轩', trees: 0 }
+            { name: '王宇飞', trees: 0 },
+            { name: '张丽丽', trees: 0 },
+            { name: '谢雨锜', trees: 0 },
+            { name: '罗安铧', trees: 0 },
+            { name: '刘子渝', trees: 0 },
+            { name: '刘鸿谕', trees: 0 }
         ],
         group6: [
-            { name: '陈阳', trees: 0 },
-            { name: '付梓潼', trees: 0 },
-            { name: '李佳恒', trees: 0 },
-            { name: '李晨瑞', trees: 0 },
-            { name: '刘例君', trees: 0 },
-            { name: '朱怡霏', trees: 0 },
-            { name: '王晨曦', trees: 0 }
+            { name: '徐卿豪', trees: 0 },
+            { name: '刘怡彤', trees: 0 },
+            { name: '田浏夕晏', trees: 0 },
+            { name: '王铃灵', trees: 0 },
+            { name: '李卓航', trees: 0 },
+            { name: '潘重任', trees: 0 }
         ],
         group7: [
-            { name: '张芯源', trees: 0 },
-            { name: '周家萱', trees: 0 },
-            { name: '郑诗琪', trees: 0 },
-            { name: '龚可心', trees: 0 },
-            { name: '张梓晨', trees: 0 },
-            { name: '陈涵', trees: 0 }
+            { name: '肖尧', trees: 0 },
+            { name: '陈彦晞', trees: 0 },
+            { name: '石馨', trees: 0 },
+            { name: '谭欣怡', trees: 0 },
+            { name: '赵铭沛', trees: 0 },
+            { name: '魏辰熙', trees: 0 }
         ],
         group8: [
-            { name: '黄圣翔', trees: 0 },
-            { name: '熊尉钦', trees: 0 },
-            { name: '蒋智成', trees: 0 },
-            { name: '张诗苑', trees: 0 },
-            { name: '董嘉熙', trees: 0 },
-            { name: '刘语诗', trees: 0 }
+            { name: '彭可馨', trees: 0 },
+            { name: '陈彩莲', trees: 0 },
+            { name: '赵妍惜', trees: 0 },
+            { name: '曾涛', trees: 0 },
+            { name: '张铭泽', trees: 0 },
+            { name: '奚崇文', trees: 0 }
+        ],
+        group9: [
+            { name: '彭彦珲', trees: 0 },
+            { name: '谭媛兮', trees: 0 },
+            { name: '李思颖', trees: 0 },
+            { name: '龚诗瑞', trees: 0 },
+            { name: '陈毅', trees: 0 },
+            { name: '刘嘉麒', trees: 0 }
         ]
     };
     
@@ -1033,14 +1040,15 @@
     // 获取小组名称
     function getGroupName(groupId) {
         const groupNames = {
-            group1: '①蛹往直前组',
-            group2: '②富强民组',
-            group3: '③墨华组',
-            group4: '④涅槃四组',
-            group5: '⑤半角模型组',
-            group6: '⑥滑动变组',
-            group7: '⑦六元七次方程组',
-            group8: '⑧二元一次方程组'
+            group1: '第一小组',
+            group2: '第二小组',
+            group3: '第三小组',
+            group4: '第四小组',
+            group5: '第五小组',
+            group6: '第六小组',
+            group7: '第七小组',
+            group8: '第八小组',
+            group9: '第九小组'
         };
         return groupNames[groupId] || groupId;
     }
